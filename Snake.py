@@ -15,6 +15,17 @@ sh,sw=s.getmaxyx()
 w=curses.newwin(sh, sw, 0, 0)
 w.keypad(1)
 w.timeout(100)
+score = 0
+
+'''
+Se añade la pantalla de inicio
+'''
+s.addstr(int (sh/3), int(sw/3),'SNAKE')
+s.addstr(int (sh/3) + 3, 10,'1) La serpiente no puede tocar los bordes de la pantalla')
+s.addstr(int (sh/3) + 4, 10,'2) La serpiente no se puede tocar a ella misma')
+s.addstr(int (sh/3) + 5, 10,'3) La serpiente no puede regresar')
+s.addstr(int (sh/3) + 7, 10,'Presiona enter para iniciar')
+s.getch()
 
 '''
 Aquí se crea la serpiente, la serpiente será una lista de listas donde se 
@@ -35,7 +46,7 @@ Se crea la comida de la serpiente, en este caso será el simbolo "•", y se pos
 en la ventana
 '''
 food=[sh/2,sw/2]
-w.addch(food[0],food[1],"•")
+w.addch(int(food[0]),int(food[1]),"•")
 
 key=curses.KEY_RIGHT
 #Definimos la direccion inicial de la serpiente, ya sea arriba, abajo, izquierda o derecha
@@ -51,7 +62,12 @@ while True:
     if snake[0][0] in [0, sh] or snake[0][1]  in [0, sw] or snake[0] in snake[1:]:
         #Si la serpiente choca en el limite de arriba o de abajo; o si choca con el de la derecha o izquierda
         #o si la serpiente se encuentra con si misma
-
+        a ='Tu record fue de: ' + str(score)
+        s.addstr(int (sh/3), int(sw/3),'GAME OVER')
+        s.addstr(int (sh/3) + 3, 10,'¡Oh no! Has perdido')
+        s.addstr(int (sh/3) + 4, 10, a)
+        s.addstr(int (sh/3) + 5, 10, 'Presiona enter para salir')
+        s.getch()
         curses.endwin()
         quit()
         #Entonces se acaba el juego y se regresa a la terminal
@@ -73,9 +89,14 @@ while True:
 
     if key == curses.KEY_LEFT:
         #Si se presiona la tecla flecha de la Izquierda
-
         new_head[1] -= 1
         #Entonces la "posicion X" de la serpiente se le restara 1, indicando que va hacia a la izquierda
+    
+    if key == curses.KEY_RIGHT:
+        #Si se presiona la tecla flecha de la derecha
+            new_head[1] += 1
+            #Entonces la "posicion X" de la serpiente se le sumara 1, indicando que va hacia a la derecha
+    
     snake.insert(0, new_head)
 
     '''
@@ -84,6 +105,7 @@ while True:
     comida no está en alguna casilla que pertenezca a la serpiente
     '''
     if snake[0] == food:
+        score += 1
         food = None
         while food is None:
             nf = [
@@ -91,7 +113,7 @@ while True:
                 random.randint(1, sw-1)
             ]
             food = nf if nf not in snake else None
-        w.addch(food[0], food[1], "•")
+        w.addch(int(food[0]), int(food[1]), "•")
     else:
         tail = snake.pop()
         w.addch(int (tail[0]), int(tail[1]), ' ')
@@ -101,7 +123,7 @@ while True:
     alguna falta, por que de ser asi entonces se termina el juego
     '''
     try:
-        w.addch(int(snake[0][0]), int(snake[0][1]), curses.ACS_CKBOARD)
+        w.addch(int(snake[0][0]), int(snake[0][1]),"█")
     except (curses.error):
         pass
 
