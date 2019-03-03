@@ -76,5 +76,32 @@ while True:
 
         new_head[1] -= 1
         #Entonces la "posicion X" de la serpiente se le restara 1, indicando que va hacia a la izquierda
+    snake.insert(0, new_head)
 
+    '''
+    Cuando la cabeza de la serpiente toque la comida, entonces la comida desaparecerá
+    y aparecerá en un nuevo lugar aleatorio, también se debe comprobar que la 
+    comida no está en alguna casilla que pertenezca a la serpiente
+    '''
+    if snake[0] == food:
+        food = None
+        while food is None:
+            nf = [
+                random.randint(1, sh-1),
+                random.randint(1, sw-1)
+            ]
+            food = nf if nf not in snake else None
+        w.addch(food[0], food[1], "•")
+    else:
+        tail = snake.pop()
+        w.addch(int (tail[0]), int(tail[1]), ' ')
+
+    ''''
+    Luego se vuelve añadir la serpiente en la pantalla, si es que no se ha cometido 
+    alguna falta, por que de ser asi entonces se termina el juego
+    '''
+    try:
+        w.addch(int(snake[0][0]), int(snake[0][1]), curses.ACS_CKBOARD)
+    except (curses.error):
+        pass
 
